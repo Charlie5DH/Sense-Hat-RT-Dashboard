@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'channels',
     'liveapp',
     "corsheaders",
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
