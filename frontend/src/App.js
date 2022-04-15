@@ -51,7 +51,7 @@ const App = () => {
   const [timestamp, setTimestamp] = useState("");
 
   const { lastJsonMessage, sendMessage } = useWebSocket(
-    "ws://150.162.236.51:4000/ws/pollData",
+    `ws://${process.env.IP_ADDRESS}:${process.env.PORT}/ws/pollData`,
     {
       onOpen: () => console.log(`Connected to App WS`),
       onMessage: () => {
@@ -76,6 +76,9 @@ const App = () => {
       onError: (event) => {
         console.error(event);
       },
+      onClose: (event) => {
+        console.log("Disconnected", event);
+      },
       shouldReconnect: (closeEvent) => true,
       reconnectInterval: 3000,
     }
@@ -87,21 +90,21 @@ const App = () => {
     xField: "timestamp",
     yField: "temperature",
     yAxis: {
-      min: 27,
+      min: 26,
     },
     xAxis: {
       // type: 'timeCat',
-      tickCount: 5,
+      tickCount: 3,
     },
     tooltip: {
       showMarkers: true,
     },
-    point: {
+    /* point: {
       shape: "breath-point",
-    },
+    }, */
     responsive: true,
     slider: {
-      start: 0.8,
+      start: 0.7,
       stop: 1,
     },
     autoFit: true,
@@ -113,7 +116,7 @@ const App = () => {
     xField: "timestamp",
     yField: "pressure",
     yAxis: {
-      min: 1000,
+      min: 950,
     },
     xAxis: {
       // type: 'timeCat',
@@ -122,12 +125,12 @@ const App = () => {
     tooltip: {
       showMarkers: true,
     },
-    point: {
+    /* point: {
       shape: "breath-point",
-    },
+    }, */
     responsive: true,
     slider: {
-      start: 0.8,
+      start: 0.7,
       stop: 1,
     },
     autoFit: true,
@@ -139,7 +142,7 @@ const App = () => {
     xField: "timestamp",
     yField: "humidity",
     yAxis: {
-      min: 45,
+      min: 55,
     },
     xAxis: {
       // type: 'timeCat',
@@ -148,12 +151,12 @@ const App = () => {
     tooltip: {
       showMarkers: true,
     },
-    point: {
+    /* point: {
       shape: "breath-point",
-    },
+    }, */
     responsive: true,
     slider: {
-      start: 0.8,
+      start: 0.7,
       stop: 1,
     },
     autoFit: true,

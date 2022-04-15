@@ -4,7 +4,9 @@
   const myDiv = document.getElementById("poll_data");
   var results = [];
 
-  let socket = new WebSocket("ws://150.162.236.51:4000/ws/pollData");
+  let socket = new WebSocket(
+    `ws://${process.env.IP_ADDRESS}:${process.env.PORT}/ws/pollData`
+  );
   socket.onopen = function (e) {
     alert("connection established");
   };

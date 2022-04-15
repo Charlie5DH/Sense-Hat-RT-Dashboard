@@ -1,5 +1,22 @@
 # Real-Time Application Development Using Websocket in Django
 
+This is a tutorial on how to create a real-time application using websocket in Django. We are using Redis as the channel (cache memmory) for the real-time application. The redis cache is runned in a docker container using docker-compose. More information can be found in:
+
+- https://channels.readthedocs.io/en/latest/introduction.html,
+- https://blog.heroku.com/in_deep_with_django_channels_the_future_of_real_time_apps_in_django
+- https://testdriven.io/blog/django-channels/
+- https://realpython.com/getting-started-with-django-channels/#consumers-and-groups
+- https://blog.logrocket.com/django-channels-and-websockets/
+- https://www.atatus.com/blog/websockets-tutorial-going-real-time-with-node-and-react/
+
+The frontend is a simple dashboard with temperature, humidity and pressure data coming from a raspberry pi sense hat module over WebSockets, made in reacjs and using Antd Charts with the `useWebsockets` library. There is only one channel being used. In utils is the code in the raspberry pi.
+
+**TODO**: Add interactions to stop the updating of the dashboard. Add storage to a database (MongoDB).
+
+<img src="./assets/dashboard.png" alt="" />
+
+## WebSockets
+
 WebSocket is a computer communication protocol that provides a full duplex communication channel over a single TCP connection. All internet browsers have supported Websockets since 2011.
 
 Which Web Applications can be Developed using Websocket
@@ -216,3 +233,11 @@ WebSocket doesn’t come with CORS inbuilt. That being said, it means that any w
 Sure, Origin header can be faked by an attacker, but it doesn’t matter, because to exploit it, attacker needs to fake the Origin header on victim’s browser, and modern browsers do not allow normal javascript sitting in web browsers to change Origin header.
 
 Moreover, if you’re actually authenticating users using, preferably, cookies, then this is not really a problem for you
+
+### Notes
+
+To connect with the django server from other computer, we have to run the server defining the host and port, with the IP address of the computer.
+
+```bash
+python manage.py runserver ${your_ip_address}:${your_port}
+```

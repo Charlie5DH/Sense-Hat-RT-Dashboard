@@ -10,7 +10,7 @@ sense = SenseHat()
 ws = websocket.WebSocket()
 
 try:
-    ws.connect("ws://150.162.236.51:4000/ws/pollData")
+    ws.connect("ws://{ip_address}:{port}/ws/pollData")
 except:
     print('error connecting')
     pass
