@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import useWebSocket from "react-use-websocket";
 import { Box, Container } from "@mui/material";
 import ReactDOM from "react-dom";
-import { G2, Column, Line } from "@ant-design/plots";
+import { G2, Column, Line, Area, Scatter } from "@ant-design/plots";
 
 const initData = [
   {
@@ -43,20 +43,39 @@ const initData = [
   },
 ];
 
+const init_orientation = [
+  {
+    pitch: 358.82,
+    roll: 1.1,
+    yaw: 297.84,
+    acceleration_x: 0.01624,
+    acceleration_y: 0.02452,
+    acceleration_z: 1.00232,
+    timestamp: "2022-04-18 13:08:14",
+  },
+];
+
 const App = () => {
   const [data, setData] = useState(initData); // array of data points, default should be extracted from DB
+  const [orientationData, setOrinetationData] = useState(init_orientation); // array of data points, default should be extracted from DB
   const [temperature, setTemperature] = useState();
   const [pressure, setPressure] = useState();
   const [humidity, setHumidity] = useState();
   const [timestamp, setTimestamp] = useState("");
+  const [pitch, setPitch] = useState();
+  const [roll, setRoll] = useState();
+  const [yaw, setYaw] = useState();
+  const [acceleration_x, setAcceleration_x] = useState();
+  const [acceleration_y, setAcceleration_y] = useState();
+  const [acceleration_z, setAcceleration_z] = useState();
 
   const { lastJsonMessage, sendMessage } = useWebSocket(
-    `ws://${process.env.IP_ADDRESS}:${process.env.PORT}/ws/pollData`,
+    `ws://150.162.10.42:8000/ws/pollData`,
     {
       onOpen: () => console.log(`Connected to App WS`),
       onMessage: () => {
         if (lastJsonMessage) {
-          console.log(lastJsonMessage);
+          //console.log(lastJsonMessage);
           setTemperature(lastJsonMessage.temperature);
           setTimestamp(lastJsonMessage.timestamp);
           setPressure(lastJsonMessage.pressure);
@@ -84,11 +103,51 @@ const App = () => {
     }
   );
 
+  const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } =
+    useWebSocket(`ws://150.162.10.42:8000/ws/orientation`, {
+      onOpen: () => console.log(`Connected to App WS Orientation`),
+      onMessage: () => {
+        if (socketMessage) {
+          //console.log(socketMessage);
+          setPitch(socketMessage.pitch);
+          setRoll(socketMessage.roll);
+          setYaw(socketMessage.yaw);
+          setAcceleration_x(socketMessage.acceleration_x);
+          setAcceleration_y(socketMessage.acceleration_y);
+          setAcceleration_z(socketMessage.acceleration_z);
+          setOrinetationData([
+            ...orientationData,
+            {
+              pitch: socketMessage.pitch,
+              roll: socketMessage.roll,
+              yaw: socketMessage.yaw,
+              acceleration_x: socketMessage.acceleration_x,
+              acceleration_y: socketMessage.acceleration_y,
+              acceleration_z: socketMessage.acceleration_z,
+              timestamp: socketMessage.timestamp,
+            },
+          ]);
+        }
+      },
+      queryParams: { token: "123456" },
+      onError: (event) => {
+        console.error(event);
+      },
+      onClose: (event) => {
+        console.log("Disconnected", event);
+      },
+      shouldReconnect: (closeEvent) => true,
+      reconnectInterval: 3000,
+    });
+
   const tempConfig = {
     data,
     padding: "auto",
     xField: "timestamp",
     yField: "temperature",
+    lineStyle: {
+      stroke: "#F4664A",
+    },
     yAxis: {
       min: 26,
     },
@@ -108,6 +167,7 @@ const App = () => {
       stop: 1,
     },
     autoFit: true,
+    height: 360,
   };
 
   const pressureConfig = {
@@ -134,6 +194,7 @@ const App = () => {
       stop: 1,
     },
     autoFit: true,
+    height: 360,
   };
 
   const humidityConfig = {
@@ -141,6 +202,9 @@ const App = () => {
     padding: "auto",
     xField: "timestamp",
     yField: "humidity",
+    lineStyle: {
+      stroke: "#8D9DBF",
+    },
     yAxis: {
       min: 55,
     },
@@ -160,26 +224,183 @@ const App = () => {
       stop: 1,
     },
     autoFit: true,
+    height: 360,
   };
 
-  const configCols = {
-    data,
+  const pitchConfig = {
+    data: orientationData,
     padding: "auto",
     xField: "timestamp",
-    yField: "humidity",
-    autoFit: true,
-    columnStyle: {
-      radius: [20, 20, 0, 0],
+    yField: "pitch",
+    lineStyle: {
+      stroke: "#6D5CF4",
     },
+    yAxis: {
+      min: 0,
+      max: 370,
+    },
+    xAxis: {
+      // type: 'timeCat',
+      tickCount: 5,
+    },
+    tooltip: {
+      showMarkers: true,
+    },
+    /* point: {
+      shape: "breath-point",
+    }, */
+    responsive: true,
     slider: {
-      start: 0.8,
+      start: 0.7,
       stop: 1,
     },
+    autoFit: true,
+    height: 360,
+  };
+
+  const rollConfig = {
+    data: orientationData,
+    padding: "auto",
+    xField: "timestamp",
+    yField: "roll",
+    lineStyle: {
+      stroke: "#00887A",
+    },
+    yAxis: {
+      min: 0,
+      max: 370,
+    },
+    xAxis: {
+      // type: 'timeCat',
+      tickCount: 5,
+    },
+    tooltip: {
+      showMarkers: true,
+    },
+    /* point: {
+      shape: "breath-point",
+    }, */
+    responsive: true,
+    slider: {
+      start: 0.7,
+      stop: 1,
+    },
+    autoFit: true,
+    height: 360,
+  };
+
+  const yawConfig = {
+    data: orientationData,
+    padding: "auto",
+    xField: "timestamp",
+    yField: "yaw",
+    lineStyle: {
+      stroke: "#8D9DBF",
+    },
+    yAxis: {
+      min: 0,
+      max: 370,
+    },
+    xAxis: {
+      // type: 'timeCat',
+      tickCount: 5,
+    },
+    tooltip: {
+      showMarkers: true,
+    },
+    /* point: {
+      shape: "breath-point",
+    }, */
+    responsive: true,
+    slider: {
+      start: 0.7,
+      stop: 1,
+    },
+    autoFit: true,
+    height: 360,
+  };
+
+  const accxConfig = {
+    data: orientationData,
+    padding: "auto",
+    xField: "timestamp",
+    yField: "acceleration_x",
+    xAxis: {
+      // type: 'timeCat',
+      tickCount: 5,
+    },
+    tooltip: {
+      showMarkers: true,
+    },
+    /* point: {
+      shape: "breath-point",
+    }, */
+    responsive: true,
+    slider: {
+      start: 0.7,
+      stop: 1,
+    },
+    autoFit: true,
+    height: 360,
+  };
+
+  const accyConfig = {
+    data: orientationData,
+    padding: "auto",
+    xField: "timestamp",
+    yField: "acceleration_y",
+    lineStyle: {
+      stroke: "#F4664A",
+    },
+    xAxis: {
+      // type: 'timeCat',
+      tickCount: 5,
+    },
+    tooltip: {
+      showMarkers: true,
+    },
+    /* point: {
+      shape: "breath-point",
+    }, */
+    responsive: true,
+    slider: {
+      start: 0.7,
+      stop: 1,
+    },
+    autoFit: true,
+    height: 360,
+  };
+
+  const acczConfig = {
+    data: orientationData,
+    padding: "auto",
+    xField: "timestamp",
+    yField: "acceleration_z",
+    lineStyle: {
+      stroke: "#8D9DBF",
+    },
+    xAxis: {
+      // type: 'timeCat',
+      tickCount: 5,
+    },
+    tooltip: {
+      showMarkers: true,
+    },
+    /* point: {
+      shape: "breath-point",
+    }, */
+    responsive: true,
+    slider: {
+      start: 0.7,
+      stop: 1,
+    },
+    autoFit: true,
+    height: 360,
   };
 
   return (
     <Container
-      maxWidth="xl"
+      maxWidth="xlg"
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -203,7 +424,7 @@ const App = () => {
             padding={"20px"}
             borderRadius={"20px"}
             maxWidth={"720px"}
-            width={"800px"}
+            width={"520px"}
           >
             <Line {...tempConfig} />
           </Box>
@@ -213,9 +434,19 @@ const App = () => {
             padding={"20px"}
             borderRadius={"20px"}
             maxWidth={"800px"}
-            width={"720px"}
+            width={"520px"}
           >
-            <Line {...pressureConfig} />
+            <Area {...pressureConfig} />
+          </Box>
+          <Box
+            marginRight={"20px"}
+            backgroundColor="#FFFFFF"
+            padding={"20px"}
+            borderRadius={"20px"}
+            maxWidth={"720px"}
+            width={"520px"}
+          >
+            <Line {...humidityConfig} />
           </Box>
         </Box>
         <Box
@@ -229,10 +460,10 @@ const App = () => {
             backgroundColor="#FFFFFF"
             padding={"20px"}
             borderRadius={"20px"}
-            maxWidth={"720px"}
-            width={"800px"}
+            maxWidth={"800px"}
+            width={"520px"}
           >
-            <Line {...humidityConfig} />
+            <Line {...pitchConfig} />
           </Box>
           <Box
             marginRight={"20px"}
@@ -240,9 +471,56 @@ const App = () => {
             padding={"20px"}
             borderRadius={"20px"}
             maxWidth={"800px"}
-            width={"720px"}
+            width={"520px"}
           >
-            <Column {...configCols} />
+            <Line {...rollConfig} />
+          </Box>
+          <Box
+            marginRight={"20px"}
+            backgroundColor="#FFFFFF"
+            padding={"20px"}
+            borderRadius={"20px"}
+            maxWidth={"800px"}
+            width={"520px"}
+          >
+            <Line {...yawConfig} />
+          </Box>
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="center"
+          marginTop={"20px"}
+        >
+          <Box
+            marginRight={"20px"}
+            backgroundColor="#FFFFFF"
+            padding={"20px"}
+            borderRadius={"20px"}
+            maxWidth={"800px"}
+            width={"520px"}
+          >
+            <Area {...accxConfig} />
+          </Box>
+          <Box
+            marginRight={"20px"}
+            backgroundColor="#FFFFFF"
+            padding={"20px"}
+            borderRadius={"20px"}
+            maxWidth={"800px"}
+            width={"520px"}
+          >
+            <Line {...accyConfig} />
+          </Box>
+          <Box
+            marginRight={"20px"}
+            backgroundColor="#FFFFFF"
+            padding={"20px"}
+            borderRadius={"20px"}
+            maxWidth={"800px"}
+            width={"520px"}
+          >
+            <Line {...acczConfig} />
           </Box>
         </Box>
       </Box>

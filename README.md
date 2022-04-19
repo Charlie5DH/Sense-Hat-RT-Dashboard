@@ -13,7 +13,7 @@ The frontend is a simple dashboard with temperature, humidity and pressure data 
 
 **TODO**: Add interactions to stop the updating of the dashboard. Add storage to a database (MongoDB).
 
-<img src="./assets/dashboard.png" alt="" />
+<img src="./assets/Screenshot 2022-04-18 182634.png" alt="" />
 
 ## WebSockets
 
