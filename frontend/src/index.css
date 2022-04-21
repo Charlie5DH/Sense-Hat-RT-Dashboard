@@ -10,3 +10,20 @@ body {
   font-weight: 400;
   line-height: 1.6;
 }
+
+.card {
+  margin-right: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 20px;
+  max-width: 720px;
+  width: 520px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 20px;
+}

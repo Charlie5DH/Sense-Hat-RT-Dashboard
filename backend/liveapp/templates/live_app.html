@@ -1,0 +1,51 @@
+<h2>Live APP</h2>
+<h3 id="poll_data">Temperature Data</h3>
+<h3 id="poll_data_2">Pitch Data</h3>
+<h3 id="poll_data_3">Acc Data</h3>
+<script>
+  const myDiv = document.getElementById("poll_data");
+  const myDiv2 = document.getElementById("poll_data_2");
+  const myDiv3 = document.getElementById("poll_data_3");
+  var results = [];
+  var results2 = [];
+
+  let socket = new WebSocket(
+    //`ws://${process.env.IP_ADDRESS}:${process.env.PORT}/ws/pollData`
+    `ws://150.162.10.73:8000/ws/pollData`
+  );
+  socket.onopen = function (e) {
+    alert("connection established");
+  };
+
+  socket.onmessage = function (e) {
+    result = JSON.parse(e.data);
+    results = [...results, result.temperature];
+    console.log(e.data);
+    console.log(results);
+    console.log(result.timestamp);
+
+    myDiv.textContent = result.temperature;
+  };
+
+  socket.onclose = function (e) {
+    alert("connection closed");
+  };
+
+  //-----------------------ORIENTATION SOCKET------------------------------
+
+  let socket_orient = new WebSocket(`ws://150.162.10.73:8000/ws/orientation`);
+  socket_orient.onopen = function (e) {
+    alert("connection established");
+  };
+  socket_orient.onmessage = function (e) {
+    result = JSON.parse(e.data);
+    results2 = [...results2, result.pitch];
+    console.log(result);
+
+    myDiv2.textContent = result.pitch;
+    myDiv3.textContent = result.acceleration_x;
+  };
+  socket_orient.onclose = function (e) {
+    alert("connection closed");
+  };
+</script>
