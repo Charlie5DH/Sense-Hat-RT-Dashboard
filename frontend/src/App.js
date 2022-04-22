@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import useWebSocket from "react-use-websocket";
 import { Box, Container } from "@mui/material";
-import { Line, Area } from "@ant-design/plots";
+import { Line, Area, Column } from "@ant-design/plots";
+import axios from "axios";
 import {
   tempConfig,
   pressureConfig,
@@ -20,6 +21,7 @@ import "./index.css";
 const App = () => {
   const [data, setData] = useState(initData); // array of data points, default should be extracted from DB
   const [orientationData, setOrinetationData] = useState(init_orientation); // array of data points, default should be extracted from DB
+  const [envData, setEnvData] = useState([]);
   /*   const [temperature, setTemperature] = useState();
   const [pressure, setPressure] = useState();
   const [humidity, setHumidity] = useState();
@@ -32,7 +34,7 @@ const App = () => {
   const [acceleration_z, setAcceleration_z] = useState(); */
 
   const { lastJsonMessage, sendMessage } = useWebSocket(
-    `ws://150.162.236.21:8000/ws/pollData`,
+    `ws://192.168.137.1:8000/ws/pollData`,
     {
       onOpen: () => console.log(`Connected to App WS`),
       onMessage: () => {
@@ -42,8 +44,8 @@ const App = () => {
           setTimestamp(lastJsonMessage.timestamp);
           setPressure(lastJsonMessage.pressure);
           setHumidity(lastJsonMessage.humidity); */
-          setData([
-            ...data,
+          setEnvData([
+            ...envData,
             {
               temperature: lastJsonMessage.temperature,
               pressure: lastJsonMessage.pressure,
@@ -66,7 +68,7 @@ const App = () => {
   );
 
   const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } =
-    useWebSocket(`ws://150.162.236.21:8000/ws/orientation`, {
+    useWebSocket(`ws://192.168.137.1:8000/ws/orientation`, {
       onOpen: () => console.log(`Connected to App WS Orientation`),
       onMessage: () => {
         if (socketMessage) {
@@ -102,6 +104,33 @@ const App = () => {
       reconnectInterval: 3000,
     });
 
+  const getEnvData = async () => {
+    await axios
+      .get(`http://192.168.137.1:8000/api/env_data/`)
+      .then((response) => {
+        setEnvData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getOrientationData = async () => {
+    await axios
+      .get(`http://192.168.137.1:8000/api/orientation_data/`)
+      .then((response) => {
+        setOrinetationData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getEnvData();
+    getOrientationData();
+  }, []);
+
   return (
     <Container
       maxWidth="xlg"
@@ -123,13 +152,13 @@ const App = () => {
         <h1>Sense Hat Dashboard</h1>
         <Box display="flex" flexDirection="row" justifyContent="center">
           <Box className="card">
-            <Line data={data} {...tempConfig} />
+            <Line data={envData} {...tempConfig} />
           </Box>
           <Box className="card">
-            <Area data={data} {...pressureConfig} />
+            <Area data={envData} {...pressureConfig} />
           </Box>
           <Box className="card">
-            <Line data={data} {...humidityConfig} />
+            <Line data={envData} {...humidityConfig} />
           </Box>
         </Box>
         <Box className="cards-container">
@@ -145,13 +174,13 @@ const App = () => {
         </Box>
         <Box className="cards-container">
           <Box className="card">
-            <Line data={orientationData} {...pitchConfig} />
+            <Column data={orientationData} {...pitchConfig} />
           </Box>
           <Box className="card">
-            <Line data={orientationData} {...rollConfig} />
+            <Column data={orientationData} {...rollConfig} />
           </Box>
           <Box className="card">
-            <Line data={orientationData} {...yawConfig} />
+            <Column data={orientationData} {...yawConfig} />
           </Box>
         </Box>
       </Box>

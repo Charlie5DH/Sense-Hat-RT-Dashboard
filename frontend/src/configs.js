@@ -20,7 +20,7 @@ export const tempConfig = {
   }, */
   responsive: true,
   slider: {
-    start: 0.7,
+    start: 0,
     stop: 1,
   },
   autoFit: true,
@@ -42,10 +42,6 @@ export const pressureConfig = {
     shape: "breath-point",
   }, */
   responsive: true,
-  slider: {
-    start: 0.7,
-    stop: 1,
-  },
   autoFit: true,
   height: 360,
 };
@@ -56,9 +52,6 @@ export const humidityConfig = {
   yField: "humidity",
   lineStyle: {
     stroke: "#8D9DBF",
-  },
-  yAxis: {
-    min: 55,
   },
   xAxis: {
     // type: 'timeCat',
@@ -71,10 +64,10 @@ export const humidityConfig = {
     shape: "breath-point",
   }, */
   responsive: true,
-  slider: {
-    start: 0.7,
+  /*   slider: {
+    start: 0,
     stop: 1,
-  },
+  }, */
   autoFit: true,
   height: 360,
 };
@@ -102,8 +95,11 @@ export const pitchConfig = {
   }, */
   responsive: true,
   slider: {
-    start: 0.7,
+    start: 0,
     stop: 1,
+  },
+  columnStyle: {
+    radius: [20, 20, 0, 0],
   },
   autoFit: true,
   height: 360,
@@ -132,8 +128,11 @@ export const rollConfig = {
   }, */
   responsive: true,
   slider: {
-    start: 0.7,
+    start: 0.8,
     stop: 1,
+  },
+  columnStyle: {
+    radius: [20, 20, 0, 0],
   },
   autoFit: true,
   height: 360,
@@ -162,8 +161,11 @@ export const yawConfig = {
   }, */
   responsive: true,
   slider: {
-    start: 0.7,
+    start: 0.8,
     stop: 1,
+  },
+  columnStyle: {
+    radius: [20, 20, 0, 0],
   },
   autoFit: true,
   height: 360,
@@ -185,8 +187,11 @@ export const accxConfig = {
   }, */
   responsive: true,
   slider: {
-    start: 0.7,
+    start: 0.8,
     stop: 1,
+  },
+  columnStyle: {
+    radius: [20, 20, 0, 0],
   },
   autoFit: true,
   height: 360,
@@ -211,7 +216,7 @@ export const accyConfig = {
   }, */
   responsive: true,
   slider: {
-    start: 0.7,
+    start: 0,
     stop: 1,
   },
   autoFit: true,
@@ -237,7 +242,7 @@ export const acczConfig = {
   }, */
   responsive: true,
   slider: {
-    start: 0.7,
+    start: 0,
     stop: 1,
   },
   autoFit: true,

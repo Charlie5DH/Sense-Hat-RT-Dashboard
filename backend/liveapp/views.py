@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from .models import SenseHatEnvMeasures, SenseHatOrientationMeasures
 from django.http import HttpResponse
 from .serializers import SenseHatEnvMeasuresSerializer, SenseHatOrientationMeasuresSerializer
+from datetime import datetime
 import json
 
 # Create your views here.
@@ -17,6 +18,98 @@ class HomePage(TemplateView):
 @api_view(['GET'])
 def getMockData(request):
     return HttpResponse(json.dumps({'data': 'Working Fine'}))
+
+@api_view(['GET'])
+def getEnvData(request):
+    env_measures = SenseHatEnvMeasures.objects.all()
+    serializer = SenseHatEnvMeasuresSerializer(env_measures, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getLastEnvBatch(request, last):
+    # Get last n measures
+    env_data = SenseHatEnvMeasures.objects.order_by('-timestamp')[:last]
+    serializer = SenseHatEnvMeasuresSerializer(env_data, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getEnvDataByDate(request, date):
+    ## Get the date in the format YYYY-MM-DD
+    env_data = SenseHatEnvMeasures.objects.filter(timestamp=date).last()
+    serializer = SenseHatEnvMeasuresSerializer(env_data, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getEnvDataByDateLast(request, date, last):
+    env_data = SenseHatEnvMeasures.objects.filter(timestamp__contains=date)[:last]
+    serializer = SenseHatEnvMeasuresSerializer(env_data, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getEnvDataByDateRange(request, init_date, end_date):
+    # Get a set of measures between two dates
+    # exampel: api/env_data/init_date=2022-04-21T18:57:49Z/end_date=2022-04-21T18:57:54Z/
+    env_data = SenseHatEnvMeasures.objects.filter(timestamp__range=[init_date, end_date])
+    serializer = SenseHatEnvMeasuresSerializer(env_data, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getEnvDataAfterDate(request, after_date):
+    # Get a set of measures after a date
+    # exampel: /api/env_data/after_date=2022-04-21T18:57:52Z
+    env_data = SenseHatEnvMeasures.objects.filter(timestamp__gt=after_date)
+    serializer = SenseHatEnvMeasuresSerializer(env_data, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getEnvDataAfterEqualDate(request, after_date):
+    # Get a set of measures after or equal a date
+    # exampel: /api/env_data/after_date=2022-04-21T18:57:52Z
+    env_data = SenseHatEnvMeasures.objects.filter(timestamp__gte=after_date)
+    serializer = SenseHatEnvMeasuresSerializer(env_data, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getEnvDataBeforeDate(request, before_date):
+    # Get a set of measures before a date
+    # exampel: api/env_data/before_date=2022-04-21T17:58:37Z
+    env_data = SenseHatEnvMeasures.objects.filter(timestamp__lt=before_date)
+    serializer = SenseHatEnvMeasuresSerializer(env_data, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getEnvDataById(request, _id):
+    # doeasn't work, because of the '_id' in the url
+    # possible fix:
+    # use pymongo to query the database and return the result
+    env_data = SenseHatEnvMeasures.objects.get(pk=_id)
+    serializer = SenseHatEnvMeasuresSerializer(env_data)
+    return Response(serializer.data)
+
+
+##----------------------ORIENTATION APIS---------------------------##
+
+@api_view(['GET'])
+def getOrientationDataLast(request, last):
+    # Get last n measures
+    orientation_data = SenseHatOrientationMeasures.objects.order_by('-timestamp')[:last]
+    serializer = SenseHatOrientationMeasuresSerializer(orientation_data, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getOrientationDataByDate(request, date):
+    ## Get the date in the format YYYY-MM-DD
+    orientation_data = SenseHatOrientationMeasures.objects.filter(timestamp=date).last()
+    serializer = SenseHatOrientationMeasuresSerializer(orientation_data, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getOrientationDataByDateRange(request, init_date, end_date):
+    # Get a set of measures between two dates
+    # exampel: api/orientation_data/init_date=2022-04-21T18:57:49Z/end_date=2022-04-21T18:57:54Z/
+    orientation_data = SenseHatOrientationMeasures.objects.filter(timestamp__range=[init_date, end_date])
+    serializer = SenseHatOrientationMeasuresSerializer(orientation_data, many=True)
+    return Response(serializer.data)
 
 class EnvironmentViewSet(viewsets.ModelViewSet):
     def list(self, request):

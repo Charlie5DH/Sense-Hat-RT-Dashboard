@@ -143,6 +143,17 @@ class OrientationConsumer(AsyncJsonWebsocketConsumer):
             }
         )
         #print ('>>>>',text_data)
+        response = await self.store_data(datapoint)
+    
+    # Store data asyncronously in the database
+    @database_sync_to_async
+    def store_data(self, datapoint):
+        serializer = SenseHatOrientationMeasuresSerializer(data=datapoint)
+        #print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            print ('>>>>', datapoint)
+            return Response(serializer.data)
 
     async def deprocessing(self,event):
         pitch=event['pitch']
