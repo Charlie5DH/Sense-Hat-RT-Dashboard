@@ -1,6 +1,6 @@
 # Real-Time Application Development Using Websocket in Django
 
-This is a tutorial on how to create a real-time application using websocket in Django. We are using Redis as the channel (cache memmory) for the real-time application. The redis cache is runned in a docker container using docker-compose. More information can be found in:
+This is a tutorial on how to create a real-time application using websocket in Django. We are using Redis as the channel (cache memmory) for the real-time application. The redis cache is runned in a docker container using docker-compose. We are also using a MongoDB database running in a container, in its default port. More information about channels can be found in:
 
 - https://channels.readthedocs.io/en/latest/introduction.html,
 - https://blog.heroku.com/in_deep_with_django_channels_the_future_of_real_time_apps_in_django
@@ -11,7 +11,7 @@ This is a tutorial on how to create a real-time application using websocket in D
 
 The frontend is a simple dashboard with temperature, humidity and pressure data coming from a raspberry pi sense hat module over WebSockets, made in reacjs and using Antd Charts with the `useWebsockets` library. There is only one channel being used. In utils is the code in the raspberry pi.
 
-**TODO**: Add interactions to stop the updating of the dashboard. Add storage to a database (MongoDB).
+**TODO**: Add interactions to stop the updating of the dashboard.
 
 <img src="./assets/Screenshot 2022-04-18 182634.png" alt="" />
 
@@ -45,7 +45,7 @@ WSGI_APPLICATION = 'learndj.wsgi.application'
 ASGI_APPLICATION = 'learndj.routing.application'
 ```
 
-If we are going to use `CHANNEL_LAYERS` that came with Django, we add the following codes. If Redis will be used in real time application, you can use the commented part in the following codes.
+If we are going to use `CHANNEL_LAYERS` that came with Django, we add the following codes. Django provides an in memmory channel layer, however this is not recommended for production.
 
 ```python
 CHANNEL_LAYERS = {
@@ -53,15 +53,6 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     },
 }
-
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("localhost", 6379)],
-#         },
-#     },
-# }
 ```
 
 When defining the websocket url, we add `ws/` prefix to separate it from other urls.
@@ -225,6 +216,39 @@ Consequently, we use a custom `redis-server` command with `--save 60 1` which in
 Subsequently, we use a volume for the /data where any writes will be persisted. It is mapped to a volume called cache. This volume is managed as a local driver, you can read more about Docker volume driver if you want.
 
 To run the container we can run the command docker-compose up with the above file using `​​docker-compose -f docker-compose.yml`.
+
+## Database Connection
+
+We are using a MongoDB database to store the data coming through the Channel. The data is received by the consumer and stored in the database in a sync form, since access to the database must be synchronized. For this, we declare a sync function in the consumers using `database_sync_to_async` as decorator ad call the function inside the receive method of the consumer.
+
+```python
+@database_sync_to_async
+    def store_data(self, datapoint):
+        serializer = SenseHatOrientationMeasuresSerializer(data=datapoint)
+        #print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            print ('>>>>', datapoint)
+            return Response(serializer.data)
+```
+
+The connection with the MongoDB database is made using Djongo.
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'ENFORCE_SCHEMA': False,
+        "NAME": "mongo_rtchannels",
+        "CLIENT": {
+            "host": "localhost",
+            "port": 27017,
+            "username": "root",
+            "password": "root",
+        },
+    }
+}
+```
 
 ### WebSocker Origin
 
