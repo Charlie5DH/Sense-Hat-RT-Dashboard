@@ -5,9 +5,6 @@ export const tempConfig = {
   lineStyle: {
     stroke: "#F4664A",
   },
-  yAxis: {
-    min: 22,
-  },
   xAxis: {
     // type: 'timeCat',
     tickCount: 3,

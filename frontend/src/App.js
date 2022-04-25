@@ -13,16 +13,19 @@ import {
   pitchConfig,
   rollConfig,
   yawConfig,
-  initData,
-  init_orientation,
 } from "./configs";
+import ChartJSLine from "./ChartJsLine";
 import "./index.css";
+import Page from "./Echarts";
 
 const App = () => {
-  const [data, setData] = useState(initData); // array of data points, default should be extracted from DB
-  const [orientationData, setOrinetationData] = useState(init_orientation); // array of data points, default should be extracted from DB
+  const hostAddress = "192.168.137.1";
+  const port = "8000";
+  //const [data, setData] = useState(initData); // array of data points, default should be extracted from DB
+  const [orientationData, setOrinetationData] = useState([]); // array of data points, default should be extracted from DB
   const [envData, setEnvData] = useState([]);
-  /*   const [temperature, setTemperature] = useState();
+
+  const [temperature, setTemperature] = useState();
   const [pressure, setPressure] = useState();
   const [humidity, setHumidity] = useState();
   const [timestamp, setTimestamp] = useState("");
@@ -31,19 +34,21 @@ const App = () => {
   const [yaw, setYaw] = useState();
   const [acceleration_x, setAcceleration_x] = useState();
   const [acceleration_y, setAcceleration_y] = useState();
-  const [acceleration_z, setAcceleration_z] = useState(); */
+  const [acceleration_z, setAcceleration_z] = useState();
 
   const { lastJsonMessage, sendMessage } = useWebSocket(
-    `ws://192.168.137.1:8000/ws/pollData`,
+    `ws://${hostAddress}:${port}/ws/pollData`,
     {
       onOpen: () => console.log(`Connected to App WS`),
       onMessage: () => {
         if (lastJsonMessage) {
           //console.log(lastJsonMessage);
-          /* setTemperature(lastJsonMessage.temperature);
+          //console.log(envData.length);
+          setTemperature(lastJsonMessage.temperature);
           setTimestamp(lastJsonMessage.timestamp);
           setPressure(lastJsonMessage.pressure);
-          setHumidity(lastJsonMessage.humidity); */
+          setHumidity(lastJsonMessage.humidity);
+
           setEnvData([
             ...envData,
             {
@@ -68,7 +73,7 @@ const App = () => {
   );
 
   const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } =
-    useWebSocket(`ws://192.168.137.1:8000/ws/orientation`, {
+    useWebSocket(`ws://${hostAddress}:${port}/ws/orientation`, {
       onOpen: () => console.log(`Connected to App WS Orientation`),
       onMessage: () => {
         if (socketMessage) {
@@ -106,9 +111,9 @@ const App = () => {
 
   const getEnvData = async () => {
     await axios
-      .get(`http://192.168.137.1:8000/api/env_data/`)
+      .get(`http://${hostAddress}:${port}/api/env_data/last=${500}`)
       .then((response) => {
-        setEnvData(response.data);
+        setEnvData(response.data.reverse());
       })
       .catch((error) => {
         console.log(error);
@@ -117,9 +122,9 @@ const App = () => {
 
   const getOrientationData = async () => {
     await axios
-      .get(`http://192.168.137.1:8000/api/orientation_data/`)
+      .get(`http://${hostAddress}:${port}/api/orientation_data/last=${500}`)
       .then((response) => {
-        setOrinetationData(response.data);
+        setOrinetationData(response.data.reverse());
       })
       .catch((error) => {
         console.log(error);
@@ -150,12 +155,12 @@ const App = () => {
         width={"100%"}
       >
         <h1>Sense Hat Dashboard</h1>
-        <Box display="flex" flexDirection="row" justifyContent="center">
+        {/* <Box display="flex" flexDirection="row" justifyContent="center">
           <Box className="card">
             <Line data={envData} {...tempConfig} />
           </Box>
           <Box className="card">
-            <Area data={envData} {...pressureConfig} />
+            <Line data={envData} {...pressureConfig} />
           </Box>
           <Box className="card">
             <Line data={envData} {...humidityConfig} />
@@ -182,8 +187,48 @@ const App = () => {
           <Box className="card">
             <Column data={orientationData} {...yawConfig} />
           </Box>
-        </Box>
+        </Box> */}
       </Box>
+      <Container maxWidth="xlg">
+        {envData.length > 0 ? (
+          <Box>
+            <Box className="echart-card">
+              <Page
+                x={envData?.map((data) => new Date(data?.timestamp))}
+                y={envData?.map((data) => data?.temperature)}
+                y1={envData?.map((data) => data?.humidity)}
+                legend={["Temperature", "Humidity"]}
+                serie1Name="Temperature"
+                serie2Name="Humidity"
+              />
+            </Box>
+            <Box className="echart-card">
+              <Page
+                x={orientationData?.map((data) => new Date(data?.timestamp))}
+                y={orientationData?.map((data) => data?.acceleration_x)}
+                y1={orientationData?.map((data) => data?.acceleration_y)}
+                y2={orientationData?.map((data) => data?.acceleration_z)}
+                legend={["Acceleration X", "Acceleration Y", "Acceleration Z"]}
+                serie1Name="Acceleration X"
+                serie2Name="Acceleration Y"
+                serie3Name="Acceleration Z"
+              />
+            </Box>
+            <Box className="echart-card">
+              <Page
+                x={orientationData?.map((data) => new Date(data?.timestamp))}
+                y={orientationData?.map((data) => data?.pitch)}
+                y1={orientationData?.map((data) => data?.roll)}
+                y2={orientationData?.map((data) => data?.yaw)}
+                legend={["Pitch", "Roll", "Yaw"]}
+                serie1Name="Pitch"
+                serie2Name="Roll"
+                serie3Name="Yaw"
+              />
+            </Box>
+          </Box>
+        ) : null}
+      </Container>
     </Container>
   );
 };
