@@ -33,6 +33,14 @@ const Page = ({ x, y, y1, y2, legend, serie1Name, serie2Name, serie3Name }) => {
         );
       }, */
     },
+    /* dataZoom: [
+      {
+        show: true,
+        realtime: true,
+        start: 80,
+        end: 100,
+      },
+    ], */
     legend: {
       data: legend,
     },
@@ -98,7 +106,7 @@ const Page = ({ x, y, y1, y2, legend, serie1Name, serie2Name, serie3Name }) => {
         type: "line",
         smooth: true,
         sampling: "lttb",
-        markArea: {
+        /* markArea: {
           itemStyle: {
             color: "rgba(255, 173, 177, 0.4)",
           },
@@ -113,7 +121,7 @@ const Page = ({ x, y, y1, y2, legend, serie1Name, serie2Name, serie3Name }) => {
               },
             ],
           ],
-        },
+        }, */
         stack: "total",
         data: y,
         //areaStyle: {},
