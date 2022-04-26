@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import useWebSocket from "react-use-websocket";
-import { Box, Container } from "@mui/material";
-import { Line, Area, Column } from "@ant-design/plots";
+import useWebSocket, { ReadyState } from "react-use-websocket";
+import { Box, Button, Container } from "@mui/material";
+//import { Line, Area, Column } from "@ant-design/plots";
 import axios from "axios";
-import {
+/* import {
   tempConfig,
   pressureConfig,
   humidityConfig,
@@ -13,19 +13,20 @@ import {
   pitchConfig,
   rollConfig,
   yawConfig,
-} from "./configs";
-import ChartJSLine from "./ChartJsLine";
+} from "./configs"; */
+//import ChartJSLine from "./ChartJsLine";
 import "./index.css";
 import Page from "./Echarts";
 
 const App = () => {
   const hostAddress = "192.168.137.1";
   const port = "8000";
-  //const [data, setData] = useState(initData); // array of data points, default should be extracted from DB
-  const [orientationData, setOrinetationData] = useState([]); // array of data points, default should be extracted from DB
+  const [socketUrl, setSocketUrl] = useState(`ws://${hostAddress}:${port}`);
+  //const [data, setData] = useState(initData);
+  const [orientationData, setOrinetationData] = useState([]);
   const [envData, setEnvData] = useState([]);
 
-  const [temperature, setTemperature] = useState();
+  /*   const [temperature, setTemperature] = useState();
   const [pressure, setPressure] = useState();
   const [humidity, setHumidity] = useState();
   const [timestamp, setTimestamp] = useState("");
@@ -34,20 +35,20 @@ const App = () => {
   const [yaw, setYaw] = useState();
   const [acceleration_x, setAcceleration_x] = useState();
   const [acceleration_y, setAcceleration_y] = useState();
-  const [acceleration_z, setAcceleration_z] = useState();
+  const [acceleration_z, setAcceleration_z] = useState(); */
 
-  const { lastJsonMessage, sendMessage } = useWebSocket(
-    `ws://${hostAddress}:${port}/ws/pollData`,
+  const { lastJsonMessage, sendMessage, readyState } = useWebSocket(
+    `${socketUrl}/ws/pollData`,
     {
       onOpen: () => console.log(`Connected to App WS`),
       onMessage: () => {
         if (lastJsonMessage) {
           //console.log(lastJsonMessage);
           //console.log(envData.length);
-          setTemperature(lastJsonMessage.temperature);
+          /* setTemperature(lastJsonMessage.temperature);
           setTimestamp(lastJsonMessage.timestamp);
           setPressure(lastJsonMessage.pressure);
-          setHumidity(lastJsonMessage.humidity);
+          setHumidity(lastJsonMessage.humidity); */
 
           setEnvData([
             ...envData,
@@ -73,7 +74,7 @@ const App = () => {
   );
 
   const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } =
-    useWebSocket(`ws://${hostAddress}:${port}/ws/orientation`, {
+    useWebSocket(`${socketUrl}/ws/orientation`, {
       onOpen: () => console.log(`Connected to App WS Orientation`),
       onMessage: () => {
         if (socketMessage) {
@@ -136,6 +137,13 @@ const App = () => {
     getOrientationData();
   }, []);
 
+  const disconnectSocket = () => {
+    setSocketUrl("");
+  };
+  const connectSocket = () => {
+    setSocketUrl(`ws://${hostAddress}:${port}`);
+  };
+
   return (
     <Container
       maxWidth="xlg"
@@ -154,7 +162,17 @@ const App = () => {
         alignItems="center"
         width={"100%"}
       >
-        <h1>Sense Hat Dashboard</h1>
+        <h2>
+          Sense Hat Dashboard. Socket currently is{" "}
+          {readyState ? "Connected" : "Disconnected"}
+        </h2>
+        <Button
+          onClick={
+            socketUrl === "" ? () => connectSocket() : () => disconnectSocket()
+          }
+        >
+          {socketUrl === "" ? "Connect" : "Disconnect"}
+        </Button>
         {/* <Box display="flex" flexDirection="row" justifyContent="center">
           <Box className="card">
             <Line data={envData} {...tempConfig} />
