@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import useWebSocket, { ReadyState } from "react-use-websocket";
+import useWebSocket from "react-use-websocket";
 import { Box, Button, Container } from "@mui/material";
 //import { Line, Area, Column } from "@ant-design/plots";
 import axios from "axios";
@@ -215,6 +215,7 @@ const App = () => {
                 x={envData?.map((data) => new Date(data?.timestamp))}
                 y={envData?.map((data) => data?.temperature)}
                 y1={envData?.map((data) => data?.humidity)}
+                y2={envData?.map((data) => data?.temperature)}
                 legend={["Temperature", "Humidity"]}
                 serie1Name="Temperature"
                 serie2Name="Humidity"
