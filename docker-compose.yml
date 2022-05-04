@@ -45,6 +45,24 @@ services:
     depends_on:
       - cache
       - mongodb
+      - rabbitmq
+    networks:
+      - rt_channels
+
+  rabbitmq:
+    image: "rabbitmq:3.8-management-alpine"
+    container_name: "rabbitmq_rtchannels"
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root
+      - RABBITMQ_USERNAME=admin
+      - RABBITMQ_PASSWORD=admin
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./queue/docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./queue/docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - rt_channels
 

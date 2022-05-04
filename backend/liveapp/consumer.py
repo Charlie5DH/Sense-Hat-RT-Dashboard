@@ -8,6 +8,7 @@ from .models import SenseHatEnvMeasures, SenseHatOrientationMeasures
 from .serializers import SenseHatEnvMeasuresSerializer, SenseHatOrientationMeasuresSerializer
 from channels.db import database_sync_to_async
 from rest_framework.response import Response
+from .producer import publish
 import json
 
 class DashConsumer(AsyncJsonWebsocketConsumer):
@@ -62,14 +63,18 @@ class DashConsumer(AsyncJsonWebsocketConsumer):
 
         response = await self.store_data(datapoint)
     
-    # Store data asyncronously in the database
+    # Store data asyncronously in the database and publish to the queue
     @database_sync_to_async
     def store_data(self, text_data):
         serializer = SenseHatEnvMeasuresSerializer(data=text_data)
         #print(serializer)
         if serializer.is_valid():
             serializer.save()
-            print ('>>>>',text_data)
+            # when a measure is created, a message is sent to the queue
+            # we are specifying the parameter measure_created as an identifier
+            # for the consumer to know what type of message it is and discriminate
+            publish(method='measure_created', exchange='', queue='admin', message=serializer.data)
+            print ('>> Measure Published >>>>', text_data)
             return Response(serializer.data)
 
 
