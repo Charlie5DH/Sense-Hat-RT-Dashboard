@@ -28,6 +28,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["200.135.82.72","150.162.236.51", "localhost", "*"]
 
+DEVELOPMENT = False
+if DEVELOPMENT:
+    DB_HOST = "localhost"
+    REDIS_HOST = "127.0.0.1"
+else:
+    DB_HOST = "mongodb"
+    REDIS_HOST = "cache"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -91,7 +99,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [(REDIS_HOST, 6379)],
         },
     },
 }
@@ -105,7 +113,7 @@ DATABASES = {
         'ENFORCE_SCHEMA': False,
         "NAME": "mongo_rtchannels",
         "CLIENT": {
-            "host": "localhost",
+            "host": DB_HOST,
             "port": 27017,
             "username": "root",
             "password": "root",

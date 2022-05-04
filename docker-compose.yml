@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  ## ---------------------------------------------------------
+  cache:
+    container_name: redis-cache
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - ./data/cache:/data
+    networks:
+      - rt_channels
+
+  ## ---------------------------------------------------------
+  mongodb:
+    container_name: "mongo-rtchannels"
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+      - MONGO_INITDB_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_PASSWORD=${MONGO_DB_PASSWORD}
+    env_file: .env
+    volumes:
+      - ./data/mongo:/data/db
+    networks:
+      - rt_channels
+
+  ## ---------------------------------------------------------
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    container_name: django_sense_pi
+    volumes:
+      - ./backend/:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - cache
+      - mongodb
+    networks:
+      - rt_channels
+
+  ## ---------------------------------------------------------
+
+networks:
+  rt_channels:
+    driver: bridge
+#volumes:
+#  cache:
