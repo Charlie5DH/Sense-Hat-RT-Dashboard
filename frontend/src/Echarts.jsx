@@ -13,11 +13,12 @@ const Page = ({
   serie1Name,
   serie2Name,
   serie3Name,
+  title,
   type,
 }) => {
   const option = {
     title: {
-      text: "Temperature with Echarts",
+      text: title,
     },
     tooltip: {
       trigger: "axis",
@@ -56,10 +57,14 @@ const Page = ({
     },
     toolbox: {
       feature: {
+        mark: { show: true },
+        dataView: { show: true, readOnly: false },
+        magicType: { show: true, type: ["line", "bar"] },
+        restore: { show: true },
         dataZoom: {
           yAxisIndex: "none",
         },
-        restore: {},
+
         saveAsImage: {},
       },
     },

@@ -17,6 +17,8 @@ import axios from "axios";
 //import ChartJSLine from "./ChartJsLine";
 import "./index.css";
 import Page from "./Echarts";
+import CircularBar from "./CircularBar";
+import { BarChart } from "recharts";
 
 const App = () => {
   const hostAddress = "192.168.137.1";
@@ -210,40 +212,71 @@ const App = () => {
       <Container maxWidth="xlg">
         {envData.length > 0 ? (
           <Box>
-            <Box className="echart-card">
-              <Page
-                x={envData?.map((data) => new Date(data?.timestamp))}
-                y={envData?.map((data) => data?.temperature)}
-                y1={envData?.map((data) => data?.humidity)}
-                y2={envData?.map((data) => data?.temperature)}
-                legend={["Temperature", "Humidity"]}
-                serie1Name="Temperature"
-                serie2Name="Humidity"
-              />
+            <Box
+              display="flex"
+              alignContent={"center"}
+              justifyContent="space-between"
+            >
+              <Box className="echart-card">
+                <Page
+                  x={envData?.map((data) => new Date(data?.timestamp))}
+                  y={envData?.map((data) => data?.temperature)}
+                  y1={envData?.map((data) => data?.humidity)}
+                  title="Temperature"
+                  legend={["Temperature", "Humidity"]}
+                  serie1Name="Temperature"
+                  serie2Name="Humidity"
+                />
+              </Box>
+              <Box className="echart-card">
+                <CircularBar
+                  x={envData?.map((data) => new Date(data?.timestamp))}
+                  y1={envData?.map((data) => data?.temperature)}
+                  y2={envData?.map((data) => data?.humidity)}
+                />
+              </Box>
             </Box>
-            <Box className="echart-card">
-              <Page
-                x={orientationData?.map((data) => new Date(data?.timestamp))}
-                y={orientationData?.map((data) => data?.acceleration_x)}
-                y1={orientationData?.map((data) => data?.acceleration_y)}
-                y2={orientationData?.map((data) => data?.acceleration_z)}
-                legend={["Acceleration X", "Acceleration Y", "Acceleration Z"]}
-                serie1Name="Acceleration X"
-                serie2Name="Acceleration Y"
-                serie3Name="Acceleration Z"
-              />
+            <Box
+              display="flex"
+              alignContent={"center"}
+              justifyContent="space-between"
+            >
+              <Box className="echart-card">
+                <Page
+                  x={orientationData?.map((data) => new Date(data?.timestamp))}
+                  y={orientationData?.map((data) => data?.acceleration_x)}
+                  y1={orientationData?.map((data) => data?.acceleration_y)}
+                  y2={orientationData?.map((data) => data?.acceleration_z)}
+                  title="Acceleration"
+                  legend={[
+                    "Acceleration X",
+                    "Acceleration Y",
+                    "Acceleration Z",
+                  ]}
+                  serie1Name="Acceleration X"
+                  serie2Name="Acceleration Y"
+                  serie3Name="Acceleration Z"
+                />
+              </Box>
             </Box>
-            <Box className="echart-card">
-              <Page
-                x={orientationData?.map((data) => new Date(data?.timestamp))}
-                y={orientationData?.map((data) => data?.pitch)}
-                y1={orientationData?.map((data) => data?.roll)}
-                y2={orientationData?.map((data) => data?.yaw)}
-                legend={["Pitch", "Roll", "Yaw"]}
-                serie1Name="Pitch"
-                serie2Name="Roll"
-                serie3Name="Yaw"
-              />
+            <Box
+              display="flex"
+              alignContent={"center"}
+              justifyContent="space-between"
+            >
+              <Box className="echart-card">
+                <Page
+                  x={orientationData?.map((data) => new Date(data?.timestamp))}
+                  y={orientationData?.map((data) => data?.pitch)}
+                  y1={orientationData?.map((data) => data?.roll)}
+                  y2={orientationData?.map((data) => data?.yaw)}
+                  title="Orientation"
+                  legend={["Pitch", "Roll", "Yaw"]}
+                  serie1Name="Pitch"
+                  serie2Name="Roll"
+                  serie3Name="Yaw"
+                />
+              </Box>
             </Box>
           </Box>
         ) : null}
