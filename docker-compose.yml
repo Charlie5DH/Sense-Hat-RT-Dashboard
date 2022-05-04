@@ -53,7 +53,22 @@ services:
       - rt_channels
 
   ## ---------------------------------------------------------
-
+  frontend:
+    container_name: rt_frontend
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    volumes:
+      - "./frontend/:/src"
+    ports:
+      - 4000:4000
+    stdin_open: true
+    command: npm start -- --port 4000
+    networks:
+      - rt_channels
+    depends_on:
+      - backend
+      - cache
 networks:
   rt_channels:
     driver: bridge

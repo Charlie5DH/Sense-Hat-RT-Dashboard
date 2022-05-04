@@ -9,7 +9,8 @@ import CircularBar from "./CircularBar";
 import "./index.css";
 
 const App = () => {
-  const hostAddress = "192.168.137.1";
+  //const hostAddress = "192.168.137.1";
+  const hostAddress = "backend";
   const port = "8000";
   const [socketUrl, setSocketUrl] = useState(`ws://${hostAddress}:${port}`);
   //const [data, setData] = useState(initData);
@@ -27,44 +28,44 @@ const App = () => {
   const [acceleration_y, setAcceleration_y] = useState();
   const [acceleration_z, setAcceleration_z] = useState(); */
 
-  const { lastJsonMessage, sendMessage, readyState } = useWebSocket(
-    `${socketUrl}/ws/pollData`,
-    {
-      onOpen: () => console.log(`Connected to App WS`),
-      onMessage: () => {
-        if (lastJsonMessage) {
-          //console.log(lastJsonMessage);
-          //console.log(envData.length);
-          /* setTemperature(lastJsonMessage.temperature);
+  //const { lastJsonMessage, sendMessage, readyState } = useWebSocket(socketUrl);
+  const { lastJsonMessage } = useWebSocket(`${socketUrl}/ws/pollData`, {
+    onOpen: () => console.log(`Connected to App WS`),
+    onMessage: () => {
+      if (lastJsonMessage) {
+        //console.log(lastJsonMessage);
+        //console.log(envData.length);
+        /* setTemperature(lastJsonMessage.temperature);
           setTimestamp(lastJsonMessage.timestamp);
           setPressure(lastJsonMessage.pressure);
           setHumidity(lastJsonMessage.humidity); */
 
-          setEnvData([
-            ...envData,
-            {
-              temperature: lastJsonMessage.temperature,
-              pressure: lastJsonMessage.pressure,
-              humidity: lastJsonMessage.humidity,
-              timestamp: lastJsonMessage.timestamp,
-            },
-          ]);
-        }
-      },
-      queryParams: { token: "123456" },
-      onError: (event) => {
-        console.error(event);
-      },
-      onClose: (event) => {
-        console.log("Disconnected", event);
-      },
-      shouldReconnect: (closeEvent) => true,
-      reconnectInterval: 3000,
-    }
-  );
+        setEnvData([
+          ...envData,
+          {
+            temperature: lastJsonMessage.temperature,
+            pressure: lastJsonMessage.pressure,
+            humidity: lastJsonMessage.humidity,
+            timestamp: lastJsonMessage.timestamp,
+          },
+        ]);
+      }
+    },
+    queryParams: { token: "123456" },
+    onError: (event) => {
+      console.error(event);
+    },
+    onClose: (event) => {
+      console.log("Disconnected", event);
+    },
+    shouldReconnect: (closeEvent) => true,
+    reconnectInterval: 3000,
+  });
 
-  const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } =
-    useWebSocket(`${socketUrl}/ws/orientation`, {
+  //const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } = useWebSocket(socketUrl);
+  const { lastJsonMessage: socketMessage } = useWebSocket(
+    `${socketUrl}/ws/orientation`,
+    {
       onOpen: () => console.log(`Connected to App WS Orientation`),
       onMessage: () => {
         if (socketMessage) {
@@ -98,7 +99,8 @@ const App = () => {
       },
       shouldReconnect: (closeEvent) => true,
       reconnectInterval: 3000,
-    });
+    }
+  );
 
   const getEnvData = async () => {
     await axios
@@ -152,10 +154,7 @@ const App = () => {
         alignItems="center"
         width={"100%"}
       >
-        <h2>
-          Sense Hat Dashboard. Socket currently is{" "}
-          {readyState ? "Connected" : "Disconnected"}
-        </h2>
+        <h2>Sense Hat Dashboard</h2>
         <Button
           onClick={
             socketUrl === "" ? () => connectSocket() : () => disconnectSocket()
