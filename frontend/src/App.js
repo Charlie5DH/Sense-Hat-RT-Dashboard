@@ -9,8 +9,8 @@ import CircularBar from "./CircularBar";
 import "./index.css";
 
 const App = () => {
-  //const hostAddress = "192.168.137.1";
-  const hostAddress = "backend";
+  const hostAddress = "192.168.137.1";
+  //const hostAddress = "backend";
   const port = "8000";
   const [socketUrl, setSocketUrl] = useState(`ws://${hostAddress}:${port}`);
   //const [data, setData] = useState(initData);
@@ -28,7 +28,7 @@ const App = () => {
   const [acceleration_y, setAcceleration_y] = useState();
   const [acceleration_z, setAcceleration_z] = useState(); */
 
-  //const { lastJsonMessage, sendMessage, readyState } = useWebSocket(socketUrl);
+  //const { lastJsonMessage, sendMessage } = useWebSocket(socketUrl);
   const { lastJsonMessage } = useWebSocket(`${socketUrl}/ws/pollData`, {
     onOpen: () => console.log(`Connected to App WS`),
     onMessage: () => {
@@ -62,7 +62,7 @@ const App = () => {
     reconnectInterval: 3000,
   });
 
-  //const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } = useWebSocket(socketUrl);
+  //const { lastJsonMessage: socketMessage, sendMessage: sendSocketMessage } = useWebSocket(
   const { lastJsonMessage: socketMessage } = useWebSocket(
     `${socketUrl}/ws/orientation`,
     {
