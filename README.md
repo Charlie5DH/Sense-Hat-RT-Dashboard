@@ -15,7 +15,7 @@ The frontend is a simple dashboard with temperature, humidity and pressure data 
 
 **UPDATE:** Changed Antd library to Echarts.
 
-<img src="./assets/Screenshot 2022-04-18 182634.png" alt="" />
+<img src="./assets/dashboard.png" alt="" />
 
 ## WebSockets
 
