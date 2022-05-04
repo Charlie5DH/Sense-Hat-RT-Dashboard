@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-  ## ---------------------------------------------------------
   cache:
     container_name: redis-cache
     image: redis:alpine
@@ -14,7 +13,6 @@ services:
     networks:
       - rt_channels
 
-  ## ---------------------------------------------------------
   mongodb:
     container_name: "mongo-rtchannels"
     image: mongo
@@ -32,8 +30,6 @@ services:
       - ./data/mongo:/data/db
     networks:
       - rt_channels
-
-  ## ---------------------------------------------------------
   backend:
     build:
       context: ./backend/
@@ -52,13 +48,14 @@ services:
     networks:
       - rt_channels
 
-  ## ---------------------------------------------------------
 #  frontend:
 #    container_name: rt_frontend
 #    build:
-#      context: ./frontend/
+#      context: ./frontend
 #      dockerfile: Dockerfile
+#    stdin_open: true
 #    volumes:
+#      - "/app/node_modules"
 #      - "./frontend/:/app"
 #    ports:
 #      - 4000:4000
@@ -67,6 +64,17 @@ services:
 #      - rt_channels
 #    depends_on:
 #      - backend
+
+#  nginx:
+#    depends_on:
+#      - backend
+#      - frontend
+#    restart: always
+#    build:
+#      dockerfile: Dockerfile
+#      context: ./nginx
+#    ports:
+#      - "3050:80"
 networks:
   rt_channels:
     driver: bridge

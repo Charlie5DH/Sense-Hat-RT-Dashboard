@@ -6,10 +6,7 @@ WORKDIR /app
 
 COPY package.json ./
 COPY package-lock.json ./
+COPY ./ ./
 
 RUN npm install
-# add app
-COPY . ./
-
-# start app
-#CMD ["npm", "start"]
+CMD ["npm", "start"]
