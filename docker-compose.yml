@@ -66,6 +66,71 @@ services:
     networks:
       - rt_channels
 
+  ###-------------------------------------------------------------------------
+  ###---------------CONSUMER CONTAINERS---------------------------------------
+  cache_consumer:
+    container_name: redis-cache-consumer
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6378:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - ./data/consumer_cache:/data
+    networks:
+      - rt_channels
+
+  mongodb_consumer:
+    container_name: "mongo-rtchannels-consumer"
+    image: mongo
+    restart: always
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+      - MONGO_INITDB_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_PASSWORD=${MONGO_DB_PASSWORD}
+    env_file: .env
+    volumes:
+      - ./data/consumer_mongo:/data/db
+    networks:
+      - rt_channels
+
+  backend_consumer:
+    build:
+      context: ./consumer/
+      dockerfile: Dockerfile
+    container_name: sensepi_consumer
+    volumes:
+      - ./consumer/:/app
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./.env
+      - ./.env.dev
+    depends_on:
+      - cache_consumer
+      - mongodb_consumer
+      - rabbitmq
+    networks:
+      - rt_channels
+
+  queue:
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
+    container_name: sensepi_consumer_queue
+    command: "python consumerAmqp.py"
+    depends_on:
+      - cache_consumer
+      - mongodb_consumer
+      - rabbitmq
+      - backend_consumer
+    networks:
+      - rt_channels
+
 #  frontend:
 #    container_name: rt_frontend
 #    build:
