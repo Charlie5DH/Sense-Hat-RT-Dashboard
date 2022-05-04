@@ -28,5 +28,7 @@ yarn-error.log*
 .env.test
 .env.production
 
-/data
+# data
+data/
 /data/mongo/
+backend/data/
