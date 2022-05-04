@@ -1,0 +1,12 @@
+2022-05-04 20:47:03 =SUPERVISOR REPORT====
+     Supervisor: {<0.10934.0>,rabbit_channel_sup_sup}
+     Context:    shutdown_error
+     Reason:     shutdown
+     Offender:   [{nb_children,1},{id,channel_sup},{mfargs,{rabbit_channel_sup,start_link,[]}},{restart_type,temporary},{shutdown,infinity},{child_type,supervisor}]
+
+2022-05-04 21:00:39 =SUPERVISOR REPORT====
+     Supervisor: {<0.17569.0>,rabbit_channel_sup_sup}
+     Context:    shutdown_error
+     Reason:     shutdown
+     Offender:   [{nb_children,1},{id,channel_sup},{mfargs,{rabbit_channel_sup,start_link,[]}},{restart_type,temporary},{shutdown,infinity},{child_type,supervisor}]
+
