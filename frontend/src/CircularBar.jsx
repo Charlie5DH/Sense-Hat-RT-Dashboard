@@ -1,6 +1,6 @@
 import React from "react";
 import ReactECharts from "echarts-for-react";
-import { time } from "echarts";
+//import { time } from "echarts";
 import { graphic } from "echarts";
 import "./index.css";
 

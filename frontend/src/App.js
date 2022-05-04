@@ -1,24 +1,12 @@
 import React, { useState, useEffect } from "react";
 import useWebSocket from "react-use-websocket";
 import { Box, Button, Container } from "@mui/material";
-//import { Line, Area, Column } from "@ant-design/plots";
+
 import axios from "axios";
-/* import {
-  tempConfig,
-  pressureConfig,
-  humidityConfig,
-  accxConfig,
-  accyConfig,
-  acczConfig,
-  pitchConfig,
-  rollConfig,
-  yawConfig,
-} from "./configs"; */
-//import ChartJSLine from "./ChartJsLine";
-import "./index.css";
 import Page from "./Echarts";
 import CircularBar from "./CircularBar";
-import { BarChart } from "recharts";
+
+import "./index.css";
 
 const App = () => {
   const hostAddress = "192.168.137.1";

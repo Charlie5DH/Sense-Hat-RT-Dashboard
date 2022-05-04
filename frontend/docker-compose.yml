@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  frontend:
+    container_name: rt_frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/src"
+    ports:
+      - 4000:4000
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start -- --port 4000
