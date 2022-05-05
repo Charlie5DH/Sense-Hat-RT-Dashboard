@@ -17,6 +17,22 @@ The frontend is a simple dashboard with temperature, humidity and pressure data 
 
 <img src="./assets/dashboard.png" alt="" />
 
+## Running all
+
+First configure your device to send data to your computer IP address. Assuming you have a Raspberry Pi with a Sense HAT module, you can run the following command to start the websocket server:
+
+```bash
+    docker-compose docker-compose.yml up -d --build
+```
+
+Assuming you have `node` installed, you can run the following command to start the frontend:
+
+```bash
+    cd frontend
+    npm install
+    npm start
+```
+
 ## WebSockets
 
 WebSocket is a computer communication protocol that provides a full duplex communication channel over a single TCP connection. All internet browsers have supported Websockets since 2011.
