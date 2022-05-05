@@ -93,7 +93,7 @@ const App = () => {
 
   const getEnvData = async () => {
     await axios
-      .get(`http://${hostAddress}:${port}/api/env_data/last=${5000}`)
+      .get(`http://${hostAddress}:${port}/api/env_data/last=${1000}`)
       .then((response) => {
         setEnvData(response.data.reverse());
       })
@@ -104,7 +104,7 @@ const App = () => {
 
   const getOrientationData = async () => {
     await axios
-      .get(`http://${hostAddress}:${port}/api/orientation_data/last=${5000}`)
+      .get(`http://${hostAddress}:${port}/api/orientation_data/last=${1000}`)
       .then((response) => {
         setOrinetationData(response.data.reverse());
       })
