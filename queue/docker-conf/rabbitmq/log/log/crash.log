@@ -16,3 +16,15 @@
      Reason:     shutdown
      Offender:   [{nb_children,1},{id,channel_sup},{mfargs,{rabbit_channel_sup,start_link,[]}},{restart_type,temporary},{shutdown,infinity},{child_type,supervisor}]
 
+2022-05-05 13:44:53 =SUPERVISOR REPORT====
+     Supervisor: {<0.1861.0>,rabbit_channel_sup}
+     Context:    shutdown_error
+     Reason:     noproc
+     Offender:   [{pid,<0.1864.0>},{id,channel},{mfargs,{rabbit_channel,start_link,[1,<0.1855.0>,<0.1862.0>,<0.1855.0>,<<"172.26.0.8:46658 -> 172.26.0.6:5672">>,rabbit_framing_amqp_0_9_1,{user,<<"root">>,[administrator],[{rabbit_auth_backend_internal,none}]},<<"/">>,[{<<"authentication_failure_close">>,bool,true},{<<"basic.nack">>,bool,true},{<<"connection.blocked">>,bool,true},{<<"consumer_cancel_notify">>,bool,true},{<<"publisher_confirms">>,bool,true}],<0.1856.0>,<0.1863.0>]}},{restart_type,intrinsic},{shutdown,70000},{child_type,worker}]
+
+2022-05-05 13:49:29 =SUPERVISOR REPORT====
+     Supervisor: {<0.4404.0>,rabbit_channel_sup}
+     Context:    shutdown_error
+     Reason:     noproc
+     Offender:   [{pid,<0.4407.0>},{id,channel},{mfargs,{rabbit_channel,start_link,[1,<0.4398.0>,<0.4405.0>,<0.4398.0>,<<"172.26.0.8:48788 -> 172.26.0.6:5672">>,rabbit_framing_amqp_0_9_1,{user,<<"root">>,[administrator],[{rabbit_auth_backend_internal,none}]},<<"/">>,[{<<"authentication_failure_close">>,bool,true},{<<"basic.nack">>,bool,true},{<<"connection.blocked">>,bool,true},{<<"consumer_cancel_notify">>,bool,true},{<<"publisher_confirms">>,bool,true}],<0.4399.0>,<0.4406.0>]}},{restart_type,intrinsic},{shutdown,70000},{child_type,worker}]
+
