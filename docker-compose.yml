@@ -123,6 +123,8 @@ services:
       dockerfile: Dockerfile
     container_name: sensepi_consumer_queue
     command: "python consumerAmqp.py"
+    volumes:
+      - ./consumer/consumerAmqp.py:/app/consumerAmqp.py
     depends_on:
       - cache_consumer
       - mongodb_consumer

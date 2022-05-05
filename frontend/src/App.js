@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useWebSocket from "react-use-websocket";
-import { Box, Button, Container } from "@mui/material";
+import { Box, Button, Container, LinearProgress } from "@mui/material";
 
 import axios from "axios";
 import Page from "./Echarts";
@@ -9,24 +9,13 @@ import CircularBar from "./CircularBar";
 import "./index.css";
 
 const App = () => {
-  const hostAddress = "192.168.137.1";
+  const hostAddress = "localhost";
   //const hostAddress = "backend";
   const port = "8000";
   const [socketUrl, setSocketUrl] = useState(`ws://${hostAddress}:${port}`);
   //const [data, setData] = useState(initData);
   const [orientationData, setOrinetationData] = useState([]);
   const [envData, setEnvData] = useState([]);
-
-  /*   const [temperature, setTemperature] = useState();
-  const [pressure, setPressure] = useState();
-  const [humidity, setHumidity] = useState();
-  const [timestamp, setTimestamp] = useState("");
-  const [pitch, setPitch] = useState();
-  const [roll, setRoll] = useState();
-  const [yaw, setYaw] = useState();
-  const [acceleration_x, setAcceleration_x] = useState();
-  const [acceleration_y, setAcceleration_y] = useState();
-  const [acceleration_z, setAcceleration_z] = useState(); */
 
   //const { lastJsonMessage, sendMessage } = useWebSocket(socketUrl);
   const { lastJsonMessage } = useWebSocket(`${socketUrl}/ws/pollData`, {
@@ -104,7 +93,7 @@ const App = () => {
 
   const getEnvData = async () => {
     await axios
-      .get(`http://${hostAddress}:${port}/api/env_data/last=${2000}`)
+      .get(`http://${hostAddress}:${port}/api/env_data/last=${5000}`)
       .then((response) => {
         setEnvData(response.data.reverse());
       })
@@ -115,7 +104,7 @@ const App = () => {
 
   const getOrientationData = async () => {
     await axios
-      .get(`http://${hostAddress}:${port}/api/orientation_data/last=${2000}`)
+      .get(`http://${hostAddress}:${port}/api/orientation_data/last=${5000}`)
       .then((response) => {
         setOrinetationData(response.data.reverse());
       })
@@ -162,39 +151,6 @@ const App = () => {
         >
           {socketUrl === "" ? "Connect" : "Disconnect"}
         </Button>
-        {/* <Box display="flex" flexDirection="row" justifyContent="center">
-          <Box className="card">
-            <Line data={envData} {...tempConfig} />
-          </Box>
-          <Box className="card">
-            <Line data={envData} {...pressureConfig} />
-          </Box>
-          <Box className="card">
-            <Line data={envData} {...humidityConfig} />
-          </Box>
-        </Box>
-        <Box className="cards-container">
-          <Box className="card">
-            <Area data={orientationData} {...accxConfig} />
-          </Box>
-          <Box className="card">
-            <Line data={orientationData} {...accyConfig} />
-          </Box>
-          <Box className="card">
-            <Line data={orientationData} {...acczConfig} />
-          </Box>
-        </Box>
-        <Box className="cards-container">
-          <Box className="card">
-            <Column data={orientationData} {...pitchConfig} />
-          </Box>
-          <Box className="card">
-            <Column data={orientationData} {...rollConfig} />
-          </Box>
-          <Box className="card">
-            <Column data={orientationData} {...yawConfig} />
-          </Box>
-        </Box> */}
       </Box>
       <Container maxWidth="xlg">
         {envData.length > 0 ? (
@@ -266,7 +222,11 @@ const App = () => {
               </Box>
             </Box>
           </Box>
-        ) : null}
+        ) : (
+          <Box sx={{ width: "100%", marginTop: "10em" }}>
+            <LinearProgress />
+          </Box>
+        )}
       </Container>
     </Container>
   );

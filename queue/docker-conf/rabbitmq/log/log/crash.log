@@ -10,3 +10,9 @@
      Reason:     shutdown
      Offender:   [{nb_children,1},{id,channel_sup},{mfargs,{rabbit_channel_sup,start_link,[]}},{restart_type,temporary},{shutdown,infinity},{child_type,supervisor}]
 
+2022-05-05 13:25:18 =SUPERVISOR REPORT====
+     Supervisor: {<0.4390.0>,rabbit_channel_sup_sup}
+     Context:    shutdown_error
+     Reason:     shutdown
+     Offender:   [{nb_children,1},{id,channel_sup},{mfargs,{rabbit_channel_sup,start_link,[]}},{restart_type,temporary},{shutdown,infinity},{child_type,supervisor}]
+
