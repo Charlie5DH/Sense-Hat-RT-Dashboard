@@ -33,6 +33,12 @@ Assuming you have `node` installed, you can run the following command to start t
     npm start
 ```
 
+To shut down the containers run:
+
+```bash
+    docker-compose docker-compose.yml down
+```
+
 To read more about the containers go to Containers section.
 
 ## WebSockets
