@@ -33,6 +33,8 @@ Assuming you have `node` installed, you can run the following command to start t
     npm start
 ```
 
+To read more about the containers go to Containers section.
+
 ## WebSockets
 
 WebSocket is a computer communication protocol that provides a full duplex communication channel over a single TCP connection. All internet browsers have supported Websockets since 2011.
@@ -283,3 +285,19 @@ To connect with the django server from other computer, we have to run the server
 ```bash
 python manage.py runserver ${your_ip_address}:${your_port}
 ```
+
+## Containers
+
+When we hit the docker-compose up command, we run 8 containers.
+
+- `cache`: Is the Redis server for the application that receives the data from the Raspberry Pi through the channel layer.
+- `mongodb`: Is the MongoDB server for the application that reads the Raspberry Pi data.
+- `backend`: Is the Django server for the application that reads the Raspberry Pi data and serves to the frontend.
+- `rabbitmq`: Is the RabbitMQ server to communicate the two applications, the one reading from the Raspberry Pi and the other one, the consumer, (just a testing app) writing to the MongoDB.
+- `backend_consumer`: The testing application that reads from the RabbitMQ server and stores in a MongoDB database.
+- `mongodb_consumer`: Is the MongoDB server for the consumer application.
+- `cache_consumer`: Is the Redis server for the consumer application.
+- `queue`: Is the RabbitMQ consumer for the consumer application that runs in a separate container.
+
+**TODO**:
+A better way to do this, is building different docker-compose files for each application and pass one after the other to the docker-compose up command.
